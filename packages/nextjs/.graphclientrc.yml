@@ -9,11 +9,18 @@ sources:
         endpoint: https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-mainnet
 
 additionalTypeDefs: |
-  extend type Subgraph {
-    deployedChain: String
+  enum CHAIN {
+    ARBITRUM
+    ETHEREUM
   }
+
+  extend type Subgraph {
+    deployedChain: CHAIN
+  }
+
   extend type Query {
     crossSubgraphs(skip: Int = 0, first: Int, orderBy: Subgraph_orderBy, orderDirection: OrderDirection, where: Subgraph_filter, block: Block_height): [Subgraph!]!
+    subgraphDetail(id: ID!, chain: CHAIN!): Subgraph
   }
 
 additionalResolvers:

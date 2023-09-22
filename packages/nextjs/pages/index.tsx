@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { ExecutionResult } from "graphql";
 import type { NextPage } from "next";
 import { formatEther } from "viem";
@@ -40,24 +41,26 @@ const Home: NextPage = () => {
                 </thead>
                 <tbody>
                   {result?.data?.crossSubgraphs?.map(subgraph => (
-                    <tr key={subgraph.id}>
-                      <td>
-                        <div className="flex items-center space-x-3">
-                          <div className="avatar">
-                            <div className="mask mask-squircle w-12 h-12">
-                              <img src={subgraph.image || ""} alt="Logo" />
+                    <tr key={subgraph.deployedChain + ":" + subgraph.id} className="hover">
+                      <td className="max-w-sm overflow-hidden">
+                        <Link href={`subgraph/${subgraph.deployedChain + ":" + subgraph.id}`}>
+                          <div className="flex items-center space-x-3">
+                            <div className="avatar">
+                              <div className="mask mask-squircle w-12 h-12">
+                                <img src={subgraph.image || ""} alt="Logo" />
+                              </div>
+                            </div>
+                            <div>
+                              <div className="font-bold">{subgraph.displayName}</div>
+                              <div className="text-xs opacity-50">
+                                <span className="badge badge-ghost badge-sm">{subgraph.deployedChain}</span>{" "}
+                                {subgraph.currentVersion?.label}
+                              </div>
                             </div>
                           </div>
-                          <div>
-                            <div className="font-bold">{subgraph.displayName}</div>
-                            <div className="text-xs opacity-50">
-                              <span className="badge badge-ghost badge-sm">{subgraph.deployedChain}</span>{" "}
-                              {subgraph.currentVersion?.label}
-                            </div>
-                          </div>
-                        </div>
+                        </Link>
                       </td>
-                      <td>
+                      <td className="max-w-sm overflow-hidden">
                         <Address address={subgraph.creatorAddress} disableAddressLink={true} size="sm" />
                         {/* <div className="text-xs font-mono opacity-50">{subgraph.creatorAddress}</div> */}
 

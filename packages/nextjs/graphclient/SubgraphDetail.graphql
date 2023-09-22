@@ -1,5 +1,5 @@
-query Subgraphs {
-  crossSubgraphs(first: 1000, orderBy: currentSignalledTokens, orderDirection: desc, where: { entityVersion: 2 }) {
+query SubgraphDetail($id: ID!, $chain: CHAIN!) {
+  subgraphDetail(id: $id, chain: $chain) {
     active
     codeRepository
     createdAt

@@ -1,4 +1,4 @@
-// import { Resolvers } from "../.graphclient";
+import { Resolvers } from "../.graphclient";
 
 const chains = ["arbitrum", "mainnet"];
 
@@ -11,7 +11,7 @@ function isBigIntable(x: any) {
   }
 }
 
-export const resolvers = {
+export const resolvers: Resolvers = {
   //   Subgraph: {
   //     // chainName can exist already in root as we pass it in the other resolver
   //     deployedChain: (root: any, args: any, context: any, info: any) => {
@@ -28,7 +28,9 @@ export const resolvers = {
             args,
             context,
             info,
-          }).then((subgraphs: any) => subgraphs.map((subgraph: any) => ({ ...subgraph, deployedChain: source }))),
+          }).then((subgraphs: any) =>
+            subgraphs.map((subgraph: any) => ({ ...subgraph, deployedChain: source.toUpperCase() })),
+          ),
         ),
       ).then(allSubgraphs => allSubgraphs.flat());
 
@@ -54,6 +56,16 @@ export const resolvers = {
       }
 
       return results;
+    },
+    subgraphDetail: async (root: any, args: any, context: any, info: any) => {
+      const subgraph = await context[`graph-network-${args.chain.toLowerCase()}`].Query.subgraph({
+        root,
+        args,
+        context,
+        info,
+      });
+
+      return { ...subgraph, deployedChain: args.chain };
     },
   },
 };

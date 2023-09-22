@@ -21,8 +21,8 @@ import { getMesh, ExecuteMeshFn, SubscribeMeshFn, MeshContext as BaseMeshContext
 import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';
 import { path as pathModule } from '@graphql-mesh/cross-helpers';
 import { ImportFn } from '@graphql-mesh/types';
-import type { GraphNetworkArbitrumTypes } from './sources/graph-network-arbitrum/types';
 import type { GraphNetworkMainnetTypes } from './sources/graph-network-mainnet/types';
+import type { GraphNetworkArbitrumTypes } from './sources/graph-network-arbitrum/types';
 import * as importedModule$0 from "./sources/graph-network-mainnet/introspectionSchema";
 import * as importedModule$1 from "./sources/graph-network-arbitrum/introspectionSchema";
 export type Maybe<T> = T | null;
@@ -118,6 +118,7 @@ export type Query = {
   /** Access to subgraph metadata */
   _meta?: Maybe<_Meta_>;
   crossSubgraphs: Array<Subgraph>;
+  subgraphDetail?: Maybe<Subgraph>;
 };
 
 
@@ -739,6 +740,12 @@ export type QuerycrossSubgraphsArgs = {
   orderDirection?: InputMaybe<OrderDirection>;
   where?: InputMaybe<Subgraph_filter>;
   block?: InputMaybe<Block_height>;
+};
+
+
+export type QuerysubgraphDetailArgs = {
+  id: Scalars['ID'];
+  chain: CHAIN;
 };
 
 export type Subscription = {
@@ -8345,7 +8352,7 @@ export type Subgraph = {
   /** Categories that the subgraph belongs to. Modelled with a relation to allow for many-to-many relationship querying */
   categories: Array<SubgraphCategoryRelation>;
   currentVersionRelationEntity?: Maybe<CurrentSubgraphDeploymentRelation>;
-  deployedChain?: Maybe<Scalars['String']>;
+  deployedChain?: Maybe<CHAIN>;
 };
 
 
@@ -10463,6 +10470,10 @@ export type _SubgraphErrorPolicy_ =
   /** If the subgraph has indexing errors, data will be omitted. The default. */
   | 'deny';
 
+export type CHAIN =
+  | 'ARBITRUM'
+  | 'ETHEREUM';
+
 export type WithIndex<TObject> = TObject & Record<string, any>;
 export type ResolversObject<TObject> = WithIndex<TObject>;
 
@@ -10668,6 +10679,7 @@ export type ResolversTypes = ResolversObject<{
   _Block_: ResolverTypeWrapper<_Block_>;
   _Meta_: ResolverTypeWrapper<_Meta_>;
   _SubgraphErrorPolicy_: _SubgraphErrorPolicy_;
+  CHAIN: CHAIN;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -10839,6 +10851,7 @@ export type QueryResolvers<ContextType = MeshContext, ParentType extends Resolve
   delegatorSearch?: Resolver<Array<ResolversTypes['Delegator']>, ParentType, ContextType, RequireFields<QuerydelegatorSearchArgs, 'text' | 'first' | 'skip' | 'subgraphError'>>;
   _meta?: Resolver<Maybe<ResolversTypes['_Meta_']>, ParentType, ContextType, Partial<Query_metaArgs>>;
   crossSubgraphs?: Resolver<Array<ResolversTypes['Subgraph']>, ParentType, ContextType, RequireFields<QuerycrossSubgraphsArgs, 'skip'>>;
+  subgraphDetail?: Resolver<Maybe<ResolversTypes['Subgraph']>, ParentType, ContextType, RequireFields<QuerysubgraphDetailArgs, 'id' | 'chain'>>;
 }>;
 
 export type SubscriptionResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = ResolversObject<{
@@ -11492,7 +11505,7 @@ export type SubgraphResolvers<ContextType = MeshContext, ParentType extends Reso
   displayName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   categories?: Resolver<Array<ResolversTypes['SubgraphCategoryRelation']>, ParentType, ContextType, RequireFields<SubgraphcategoriesArgs, 'skip' | 'first'>>;
   currentVersionRelationEntity?: Resolver<Maybe<ResolversTypes['CurrentSubgraphDeploymentRelation']>, ParentType, ContextType>;
-  deployedChain?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  deployedChain?: Resolver<Maybe<ResolversTypes['CHAIN']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -11742,7 +11755,7 @@ sources[1] = {
           handler: graphNetworkMainnetHandler,
           transforms: graphNetworkMainnetTransforms
         }
-const additionalTypeDefs = [parse("extend type Subgraph {\n  deployedChain: String\n}\n\nextend type Query {\n  crossSubgraphs(skip: Int = 0, first: Int, orderBy: Subgraph_orderBy, orderDirection: OrderDirection, where: Subgraph_filter, block: Block_height): [Subgraph!]!\n}"),] as any[];
+const additionalTypeDefs = [parse("enum CHAIN {\n  ARBITRUM\n  ETHEREUM\n}\n\nextend type Subgraph {\n  deployedChain: CHAIN\n}\n\nextend type Query {\n  crossSubgraphs(skip: Int = 0, first: Int, orderBy: Subgraph_orderBy, orderDirection: OrderDirection, where: Subgraph_filter, block: Block_height): [Subgraph!]!\n  subgraphDetail(id: ID!, chain: CHAIN!): Subgraph\n}"),] as any[];
 const additionalResolvers = await Promise.all([
         import("../graphclient/resolvers.ts")
             .then(m => m.resolvers || m.default || m)
@@ -11767,6 +11780,12 @@ const merger = new(StitchingMerger as any)({
     get documents() {
       return [
       {
+        document: SubgraphDetailDocument,
+        get rawSDL() {
+          return printWithCache(SubgraphDetailDocument);
+        },
+        location: 'SubgraphDetailDocument.graphql'
+      },{
         document: SubgraphsDocument,
         get rawSDL() {
           return printWithCache(SubgraphsDocument);
@@ -11810,6 +11829,20 @@ export function getBuiltGraphSDK<TGlobalContext = any, TOperationContext = any>(
   const sdkRequester$ = getBuiltGraphClient().then(({ sdkRequesterFactory }) => sdkRequesterFactory(globalContext));
   return getSdk<TOperationContext, TGlobalContext>((...args) => sdkRequester$.then(sdkRequester => sdkRequester(...args)));
 }
+export type SubgraphDetailQueryVariables = Exact<{
+  id: Scalars['ID'];
+  chain: CHAIN;
+}>;
+
+
+export type SubgraphDetailQuery = { subgraphDetail?: Maybe<(
+    Pick<Subgraph, 'active' | 'codeRepository' | 'createdAt' | 'creatorAddress' | 'currentSignalledTokens' | 'deployedChain' | 'displayName' | 'id' | 'image' | 'migrated' | 'nftImage' | 'oldID' | 'updatedAt' | 'versionCount' | 'website'>
+    & { categories: Array<{ category: Pick<SubgraphCategory, 'id'> }>, currentVersion?: Maybe<(
+      Pick<SubgraphVersion, 'createdAt' | 'description' | 'entityVersion' | 'id' | 'label' | 'metadataHash' | 'version'>
+      & { subgraphDeployment: Pick<SubgraphDeployment, 'id' | 'originalName' | 'ipfsHash' | 'schemaIpfsHash'> }
+    )> }
+  )> };
+
 export type SubgraphsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -11822,9 +11855,51 @@ export type SubgraphsQuery = { crossSubgraphs: Array<(
   )> };
 
 
+export const SubgraphDetailDocument = gql`
+    query SubgraphDetail($id: ID!, $chain: CHAIN!) {
+  subgraphDetail(id: $id, chain: $chain) {
+    active
+    codeRepository
+    createdAt
+    creatorAddress
+    currentSignalledTokens
+    deployedChain
+    displayName
+    id
+    image
+    migrated
+    nftImage
+    oldID
+    updatedAt
+    versionCount
+    website
+    categories {
+      category {
+        id
+      }
+    }
+    currentVersion {
+      createdAt
+      description
+      entityVersion
+      id
+      label
+      metadataHash
+      version
+      subgraphDeployment {
+        id
+        originalName
+        ipfsHash
+        schemaIpfsHash
+      }
+    }
+  }
+}
+    ` as unknown as DocumentNode<SubgraphDetailQuery, SubgraphDetailQueryVariables>;
 export const SubgraphsDocument = gql`
     query Subgraphs {
   crossSubgraphs(
+    first: 1000
     orderBy: currentSignalledTokens
     orderDirection: desc
     where: {entityVersion: 2}
@@ -11869,9 +11944,13 @@ export const SubgraphsDocument = gql`
     ` as unknown as DocumentNode<SubgraphsQuery, SubgraphsQueryVariables>;
 
 
+
 export type Requester<C = {}, E = unknown> = <R, V>(doc: DocumentNode, vars?: V, options?: C) => Promise<R> | AsyncIterable<R>
 export function getSdk<C, E>(requester: Requester<C, E>) {
   return {
+    SubgraphDetail(variables: SubgraphDetailQueryVariables, options?: C): Promise<SubgraphDetailQuery> {
+      return requester<SubgraphDetailQuery, SubgraphDetailQueryVariables>(SubgraphDetailDocument, variables, options) as Promise<SubgraphDetailQuery>;
+    },
     Subgraphs(variables?: SubgraphsQueryVariables, options?: C): Promise<SubgraphsQuery> {
       return requester<SubgraphsQuery, SubgraphsQueryVariables>(SubgraphsDocument, variables, options) as Promise<SubgraphsQuery>;
     }
