@@ -4161,6 +4161,7 @@ __metadata:
   resolution: "@se-2/nextjs@workspace:packages/nextjs"
   dependencies:
     "@ethersproject/providers": ~5.7.2
+    "@graphprotocol/client-cli": ^3.0.0
     "@heroicons/react": ~2.0.11
     "@rainbow-me/rainbowkit": 1.0.8
     "@trivago/prettier-plugin-sort-imports": ~4.1.1
@@ -4177,6 +4178,7 @@ __metadata:
     eslint-config-next: ~13.1.6
     eslint-config-prettier: ~8.5.0
     eslint-plugin-prettier: ~4.2.1
+    graphql: ^16.8.1
     next: ~13.1.6
     nextjs-progressbar: ~0.0.16
     postcss: ~8.4.16
