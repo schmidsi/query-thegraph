@@ -1,9 +1,19 @@
+import { useEffect } from "react";
 import Link from "next/link";
 import type { NextPage } from "next";
+import { SubgraphsDocument, execute } from "~graphclient/index";
+// SubgraphsQuery
 import { BugAntIcon, MagnifyingGlassIcon, SparklesIcon } from "@heroicons/react/24/outline";
 import { MetaHeader } from "~~/components/MetaHeader";
 
 const Home: NextPage = () => {
+  useEffect(() => {
+    execute(SubgraphsDocument, {}).then(result => {
+      // setResult(result);
+      console.log(result);
+    });
+  }, []);
+
   return (
     <>
       <MetaHeader />

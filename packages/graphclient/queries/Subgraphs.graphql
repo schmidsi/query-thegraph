@@ -1,0 +1,6 @@
+query Subgraphs {
+  subgraphs {
+    id
+    displayName
+  }
+}
