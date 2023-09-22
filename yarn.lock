@@ -9955,15 +9955,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphclient@workspace:packages/graphclient":
-  version: 0.0.0-use.local
-  resolution: "graphclient@workspace:packages/graphclient"
-  dependencies:
-    "@graphprotocol/client-cli": ^3.0.0
-    graphql: ^16.8.1
-  languageName: unknown
-  linkType: soft
-
 "grapheme-splitter@npm:^1.0.4":
   version: 1.0.4
   resolution: "grapheme-splitter@npm:1.0.4"
