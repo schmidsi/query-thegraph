@@ -1,4 +1,8 @@
 # Query The Graph
 
-- https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-mainnet
-- https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-arbitrum
+Example how to query The Graph with Graph Client.
+
+Merge these two subgraphs:
+
+- https://thegraph.com/hosted-service/subgraph/graphprotocol/graph-network-mainnet
+- https://thegraph.com/hosted-service/subgraph/graphprotocol/graph-network-arbitrum
