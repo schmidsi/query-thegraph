@@ -1,9 +1,24 @@
 sources:
+  - name: graph-network-arbitrum
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-arbitrum
   - name: graph-network-mainnet
     handler:
       graphql:
         endpoint: https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-mainnet
 
+additionalTypeDefs: |
+  extend type Subgraph {
+    deployedChain: String
+  }
+  extend type Query {
+    crossSubgraphs(skip: Int = 0, first: Int, orderBy: Subgraph_orderBy, orderDirection: OrderDirection, where: Subgraph_filter, block: Block_height): [Subgraph!]!
+  }
+
+additionalResolvers:
+  - ./graphclient/resolvers.ts
+
 documents:
-  - "./queries/**/*.graphql"
+  - "./graphclient/**/*.graphql"
   # - "./mutations/**/*.graphql"

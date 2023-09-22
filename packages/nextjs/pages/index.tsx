@@ -39,7 +39,7 @@ const Home: NextPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {result?.data?.subgraphs?.map(subgraph => (
+                  {result?.data?.crossSubgraphs?.map(subgraph => (
                     <tr key={subgraph.id}>
                       <td>
                         <div className="flex items-center space-x-3">
@@ -50,7 +50,10 @@ const Home: NextPage = () => {
                           </div>
                           <div>
                             <div className="font-bold">{subgraph.displayName}</div>
-                            <div className="text-xs opacity-50">{subgraph.currentVersion?.label}</div>
+                            <div className="text-xs opacity-50">
+                              <span className="badge badge-ghost badge-sm">{subgraph.deployedChain}</span>{" "}
+                              {subgraph.currentVersion?.label}
+                            </div>
                           </div>
                         </div>
                       </td>

@@ -1,10 +1,11 @@
 query Subgraphs {
-  subgraphs(orderBy: currentSignalledTokens, orderDirection: desc, where: { entityVersion: 2 }) {
+  crossSubgraphs(orderBy: currentSignalledTokens, orderDirection: desc, where: { entityVersion: 2 }) {
     active
     codeRepository
     createdAt
     creatorAddress
     currentSignalledTokens
+    deployedChain
     displayName
     id
     image
