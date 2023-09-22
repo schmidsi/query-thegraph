@@ -16,7 +16,6 @@
     "incremental": true,
     "paths": {
       "~~/*": ["./*"],
-      "~graphclient/*": ["../graphclient/.graphclient/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
