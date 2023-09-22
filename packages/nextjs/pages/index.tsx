@@ -1,15 +1,17 @@
-import { useEffect } from "react";
-import Link from "next/link";
+import { useEffect, useState } from "react";
+import { ExecutionResult } from "graphql";
 import type { NextPage } from "next";
-import { BugAntIcon, MagnifyingGlassIcon, SparklesIcon } from "@heroicons/react/24/outline";
-import { SubgraphsDocument, execute } from "~~/.graphclient";
-// SubgraphsQuery
+import { formatEther } from "viem";
+import { SubgraphsDocument, SubgraphsQuery, execute } from "~~/.graphclient";
 import { MetaHeader } from "~~/components/MetaHeader";
+import { Address } from "~~/components/scaffold-eth";
 
 const Home: NextPage = () => {
+  const [result, setResult] = useState<ExecutionResult<SubgraphsQuery>>();
+
   useEffect(() => {
     execute(SubgraphsDocument, {}).then(result => {
-      // setResult(result);
+      setResult(result);
       console.log(result);
     });
   }, []);
@@ -19,59 +21,57 @@ const Home: NextPage = () => {
       <MetaHeader />
       <div className="flex items-center flex-col flex-grow pt-10">
         <div className="px-5">
-          <h1 className="text-center mb-8">
-            <span className="block text-2xl mb-2">Welcome to</span>
-            <span className="block text-4xl font-bold">Scaffold-ETH 2</span>
+          <h1 className="text-center">
+            <span className="block text-4xl font-bold">Query The Graph</span>
           </h1>
-          <p className="text-center text-lg">
-            Get started by editing{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              packages/nextjs/pages/index.tsx
-            </code>
-          </p>
-          <p className="text-center text-lg">
-            Edit your smart contract{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              YourContract.sol
-            </code>{" "}
-            in{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              packages/hardhat/contracts
-            </code>
-          </p>
         </div>
 
         <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12">
           <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <BugAntIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Tinker with your smart contract using the{" "}
-                <Link href="/debug" passHref className="link">
-                  Debug Contract
-                </Link>{" "}
-                tab.
-              </p>
-            </div>
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <SparklesIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Experiment with{" "}
-                <Link href="/example-ui" passHref className="link">
-                  Example UI
-                </Link>{" "}
-                to build your own UI.
-              </p>
-            </div>
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <MagnifyingGlassIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Explore your local transactions with the{" "}
-                <Link href="/blockexplorer" passHref className="link">
-                  Block Explorer
-                </Link>{" "}
-                tab.
-              </p>
+            <div className="overflow-x-auto">
+              <table className="table">
+                {/* head */}
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Deployer</th>
+                    <th>Curation ⬇</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {result?.data?.subgraphs?.map(subgraph => (
+                    <tr key={subgraph.id}>
+                      <td>
+                        <div className="flex items-center space-x-3">
+                          <div className="avatar">
+                            <div className="mask mask-squircle w-12 h-12">
+                              <img src={subgraph.image || ""} alt="Logo" />
+                            </div>
+                          </div>
+                          <div>
+                            <div className="font-bold">{subgraph.displayName}</div>
+                            <div className="text-xs opacity-50">{subgraph.currentVersion?.label}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <Address address={subgraph.creatorAddress} disableAddressLink={true} size="sm" />
+                        {/* <div className="text-xs font-mono opacity-50">{subgraph.creatorAddress}</div> */}
+
+                        {subgraph.categories.map(category => (
+                          <span key={category.category.id} className="badge badge-ghost badge-sm">
+                            {category.category.id}
+                          </span>
+                        ))}
+                      </td>
+                      <td className="font-mono text-right">
+                        {formatEther(subgraph.currentSignalledTokens).split(".")[0]}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+                {/* foot */}
+              </table>
             </div>
           </div>
         </div>

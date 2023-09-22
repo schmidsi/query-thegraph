@@ -11774,14 +11774,56 @@ export function getBuiltGraphSDK<TGlobalContext = any, TOperationContext = any>(
 export type SubgraphsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SubgraphsQuery = { subgraphs: Array<Pick<Subgraph, 'id' | 'displayName'>> };
+export type SubgraphsQuery = { subgraphs: Array<(
+    Pick<Subgraph, 'active' | 'codeRepository' | 'createdAt' | 'creatorAddress' | 'currentSignalledTokens' | 'displayName' | 'id' | 'image' | 'migrated' | 'nftImage' | 'oldID' | 'updatedAt' | 'versionCount' | 'website'>
+    & { categories: Array<{ category: Pick<SubgraphCategory, 'id'> }>, currentVersion?: Maybe<(
+      Pick<SubgraphVersion, 'createdAt' | 'description' | 'entityVersion' | 'id' | 'label' | 'metadataHash' | 'version'>
+      & { subgraphDeployment: Pick<SubgraphDeployment, 'id' | 'originalName' | 'ipfsHash' | 'schemaIpfsHash'> }
+    )> }
+  )> };
 
 
 export const SubgraphsDocument = gql`
     query Subgraphs {
-  subgraphs {
-    id
+  subgraphs(
+    orderBy: currentSignalledTokens
+    orderDirection: desc
+    where: {entityVersion: 2}
+  ) {
+    active
+    codeRepository
+    createdAt
+    creatorAddress
+    currentSignalledTokens
     displayName
+    id
+    image
+    migrated
+    nftImage
+    oldID
+    updatedAt
+    versionCount
+    website
+    categories {
+      category {
+        id
+      }
+    }
+    currentVersion {
+      createdAt
+      description
+      entityVersion
+      id
+      label
+      metadataHash
+      version
+      subgraphDeployment {
+        id
+        originalName
+        ipfsHash
+        schemaIpfsHash
+      }
+    }
   }
 }
     ` as unknown as DocumentNode<SubgraphsQuery, SubgraphsQueryVariables>;
