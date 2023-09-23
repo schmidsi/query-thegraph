@@ -1,5 +1,6 @@
 import { createYoga } from "graphql-yoga";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { SubgraphDetailDocument, execute } from "~~/.graphclient";
 import { remoteExecutor, skipValidate } from "~~/graphclient/cacher/graphql";
 
 export const config = {
@@ -9,11 +10,28 @@ export const config = {
   },
 };
 
+const API_KEY = process.env.API_KEY;
+
+const getEndpoint = (chain: string, ipfsHash: string) => {
+  return `https://${
+    chain === "ARBITRUM" ? "gateway-arbitrum.network" : "gateway"
+  }.thegraph.com/api/${API_KEY}/deployments/id/${ipfsHash}`;
+};
+
 // Inspired by: https://github.com/saihaj/the-subgraph-cacher
-export default (req: NextApiRequest, res: NextApiResponse) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
   console.log(req.query);
 
-  // const API_KEY = "780fd47eecb142d5d7c5a86c3769012b";
+  const [chainId, version] = req.query.path as string[];
+  const [chain, id] = chainId.split("-");
+
+  //
+
+  const result = await execute(SubgraphDetailDocument, { chain, id });
+  const ipfsHash = result?.data?.subgraphDetail?.currentVersion.subgraphDeployment.ipfsHash;
+  const endpoint = getEndpoint(chain, ipfsHash);
+
+  console.log(ipfsHash, endpoint, version);
 
   return createYoga({
     plugins: [skipValidate, remoteExecutor],
@@ -22,7 +40,7 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
     landingPage: false,
     graphqlEndpoint: "/api/:id/:version",
     context: {
-      endpoint: "https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-mainnet",
+      endpoint,
     },
   })(req, res);
 };

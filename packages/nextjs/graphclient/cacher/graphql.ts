@@ -18,11 +18,11 @@ export const remoteExecutor: Plugin<{
 }> = {
   async onExecute({ args, setResultAndStopExecution }) {
     // const store = cacheStore(args.contextValue.env, GLOBAL_CACHE_TTL_SECONDS);
-    const request = args.contextValue.request;
+    // const request = args.contextValue.request;
 
     const endpoint = args.contextValue.endpoint;
 
-    console.log(request);
+    // console.log(request);
 
     // console.log(request.path);
     // const result = urlPattern.exec(request.url);
