@@ -5,15 +5,22 @@ import { NextPage } from "next";
 import { SubgraphDetailDocument, SubgraphDetailQuery, execute } from "~~/.graphclient";
 import { MetaHeader } from "~~/components/MetaHeader";
 
+const generateURL = (chain: string, id: string) => {
+  return `${process.env.NODE_ENV === "production" ? "https" : "http"}://${
+    process.env.NEXT_PUBLIC_VERCEL_URL
+  }/api/${chain}-${id}/latest`;
+};
+
 const SubgraphDetail: NextPage = () => {
-  const { query } = useRouter();
+  const { query, ...router } = useRouter();
   const [result, setResult] = useState<ExecutionResult<SubgraphDetailQuery>>();
 
   const [chain, id] = ((query.id as string) || ":").split(":");
 
   const subgraph = result?.data?.subgraphDetail;
 
-  console.log({ chain, id });
+  // console.log({ chain, id, subgraph });
+  console.log(router);
 
   useEffect(() => {
     if (chain && id) {
@@ -39,7 +46,9 @@ const SubgraphDetail: NextPage = () => {
 
         <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12">
           <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
-            <div className="overflow-x-auto"></div>
+            <div className="overflow-x-auto">
+              Query URL: <pre>{generateURL(chain, id)}</pre>
+            </div>
           </div>
         </div>
       </div>
