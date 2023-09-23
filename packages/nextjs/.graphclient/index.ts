@@ -23,8 +23,8 @@ import { path as pathModule } from '@graphql-mesh/cross-helpers';
 import { ImportFn } from '@graphql-mesh/types';
 import type { GraphNetworkMainnetTypes } from './sources/graph-network-mainnet/types';
 import type { GraphNetworkArbitrumTypes } from './sources/graph-network-arbitrum/types';
-import * as importedModule$0 from "./sources/graph-network-mainnet/introspectionSchema";
-import * as importedModule$1 from "./sources/graph-network-arbitrum/introspectionSchema";
+import * as importedModule$0 from "./sources/graph-network-arbitrum/introspectionSchema";
+import * as importedModule$1 from "./sources/graph-network-mainnet/introspectionSchema";
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -11678,7 +11678,7 @@ export type DirectiveResolvers<ContextType = MeshContext> = ResolversObject<{
   derivedFrom?: derivedFromDirectiveResolver<any, any, ContextType>;
 }>;
 
-export type MeshContext = GraphNetworkMainnetTypes.Context & GraphNetworkArbitrumTypes.Context & BaseMeshContext;
+export type MeshContext = GraphNetworkArbitrumTypes.Context & GraphNetworkMainnetTypes.Context & BaseMeshContext;
 
 
 import { fileURLToPath } from '@graphql-mesh/utils';
@@ -11687,10 +11687,10 @@ const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url
 const importFn: ImportFn = <T>(moduleId: string) => {
   const relativeModuleId = (pathModule.isAbsolute(moduleId) ? pathModule.relative(baseDir, moduleId) : moduleId).split('\\').join('/').replace(baseDir + '/', '');
   switch(relativeModuleId) {
-    case ".graphclient/sources/graph-network-mainnet/introspectionSchema":
+    case ".graphclient/sources/graph-network-arbitrum/introspectionSchema":
       return Promise.resolve(importedModule$0) as T;
     
-    case ".graphclient/sources/graph-network-arbitrum/introspectionSchema":
+    case ".graphclient/sources/graph-network-mainnet/introspectionSchema":
       return Promise.resolve(importedModule$1) as T;
     
     default:
