@@ -23,8 +23,8 @@ import { path as pathModule } from '@graphql-mesh/cross-helpers';
 import { ImportFn } from '@graphql-mesh/types';
 import type { GraphNetworkMainnetTypes } from './sources/graph-network-mainnet/types';
 import type { GraphNetworkArbitrumTypes } from './sources/graph-network-arbitrum/types';
-import * as importedModule$0 from "./sources/graph-network-arbitrum/introspectionSchema";
-import * as importedModule$1 from "./sources/graph-network-mainnet/introspectionSchema";
+import * as importedModule$0 from "./sources/graph-network-mainnet/introspectionSchema";
+import * as importedModule$1 from "./sources/graph-network-arbitrum/introspectionSchema";
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -10472,7 +10472,7 @@ export type _SubgraphErrorPolicy_ =
 
 export type CHAIN =
   | 'ARBITRUM'
-  | 'ETHEREUM';
+  | 'MAINNET';
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
 export type ResolversObject<TObject> = WithIndex<TObject>;
@@ -11678,7 +11678,7 @@ export type DirectiveResolvers<ContextType = MeshContext> = ResolversObject<{
   derivedFrom?: derivedFromDirectiveResolver<any, any, ContextType>;
 }>;
 
-export type MeshContext = GraphNetworkArbitrumTypes.Context & GraphNetworkMainnetTypes.Context & BaseMeshContext;
+export type MeshContext = GraphNetworkMainnetTypes.Context & GraphNetworkArbitrumTypes.Context & BaseMeshContext;
 
 
 import { fileURLToPath } from '@graphql-mesh/utils';
@@ -11687,10 +11687,10 @@ const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url
 const importFn: ImportFn = <T>(moduleId: string) => {
   const relativeModuleId = (pathModule.isAbsolute(moduleId) ? pathModule.relative(baseDir, moduleId) : moduleId).split('\\').join('/').replace(baseDir + '/', '');
   switch(relativeModuleId) {
-    case ".graphclient/sources/graph-network-arbitrum/introspectionSchema":
+    case ".graphclient/sources/graph-network-mainnet/introspectionSchema":
       return Promise.resolve(importedModule$0) as T;
     
-    case ".graphclient/sources/graph-network-mainnet/introspectionSchema":
+    case ".graphclient/sources/graph-network-arbitrum/introspectionSchema":
       return Promise.resolve(importedModule$1) as T;
     
     default:
@@ -11755,7 +11755,7 @@ sources[1] = {
           handler: graphNetworkMainnetHandler,
           transforms: graphNetworkMainnetTransforms
         }
-const additionalTypeDefs = [parse("enum CHAIN {\n  ARBITRUM\n  ETHEREUM\n}\n\nextend type Subgraph {\n  deployedChain: CHAIN\n}\n\nextend type Query {\n  crossSubgraphs(skip: Int = 0, first: Int, orderBy: Subgraph_orderBy, orderDirection: OrderDirection, where: Subgraph_filter, block: Block_height): [Subgraph!]!\n  subgraphDetail(id: ID!, chain: CHAIN!): Subgraph\n}"),] as any[];
+const additionalTypeDefs = [parse("enum CHAIN {\n  ARBITRUM\n  MAINNET\n}\n\nextend type Subgraph {\n  deployedChain: CHAIN\n}\n\nextend type Query {\n  crossSubgraphs(skip: Int = 0, first: Int, orderBy: Subgraph_orderBy, orderDirection: OrderDirection, where: Subgraph_filter, block: Block_height): [Subgraph!]!\n  subgraphDetail(id: ID!, chain: CHAIN!): Subgraph\n}"),] as any[];
 const additionalResolvers = await Promise.all([
         import("../graphclient/resolvers.ts")
             .then(m => m.resolvers || m.default || m)

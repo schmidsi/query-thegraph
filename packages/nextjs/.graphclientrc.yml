@@ -11,7 +11,7 @@ sources:
 additionalTypeDefs: |
   enum CHAIN {
     ARBITRUM
-    ETHEREUM
+    MAINNET
   }
 
   extend type Subgraph {

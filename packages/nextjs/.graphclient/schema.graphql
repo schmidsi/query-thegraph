@@ -10679,5 +10679,5 @@ enum _SubgraphErrorPolicy_ {
 
 enum CHAIN {
   ARBITRUM
-  ETHEREUM
+  MAINNET
 }
