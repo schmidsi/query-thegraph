@@ -4,6 +4,7 @@ import { ExecutionResult } from "graphql";
 import type { NextPage } from "next";
 import { formatEther } from "viem";
 import { SubgraphsDocument, SubgraphsQuery, execute } from "~~/.graphclient";
+import LoginButton from "~~/components/LoginButton";
 import { MetaHeader } from "~~/components/MetaHeader";
 import { Address } from "~~/components/scaffold-eth";
 
@@ -24,6 +25,7 @@ const Home: NextPage = () => {
         <div className="px-5">
           <h1 className="text-center">
             <span className="block text-4xl font-bold">Query The Graph</span>
+            <LoginButton />
           </h1>
         </div>
 
