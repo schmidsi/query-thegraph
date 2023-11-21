@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ExecutionResult } from "graphql";
-import type { NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import { formatEther } from "viem";
 import { SubgraphsDocument, SubgraphsQuery, execute } from "~~/.graphclient";
 import LoginButton from "~~/components/LoginButton";
 import { MetaHeader } from "~~/components/MetaHeader";
 import { Address } from "~~/components/scaffold-eth";
+import prisma from "~~/utils/prisma";
 
-const Home: NextPage = () => {
+const Home: NextPage<{ posts: any }> = ({ posts }) => {
   const [result, setResult] = useState<ExecutionResult<SubgraphsQuery>>();
+
+  console.log(posts);
 
   useEffect(() => {
     execute(SubgraphsDocument, {}).then(result => {
@@ -86,6 +89,13 @@ const Home: NextPage = () => {
       </div>
     </>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const posts = await prisma.post.findMany();
+  return {
+    props: { posts },
+  };
 };
 
 export default Home;
