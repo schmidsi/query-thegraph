@@ -1,6 +1,7 @@
-import { SupabaseAdapter } from "@auth/supabase-adapter";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
+import prisma from "~~/utils/prisma";
 
 export const authOptions = {
   // Configure one or more authentication providers
@@ -10,10 +11,8 @@ export const authOptions = {
       clientSecret: process.env.GITHUB_SECRET!,
     }),
   ],
-  adapter: SupabaseAdapter({
-    url: process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    secret: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  }),
+  adapter: PrismaAdapter(prisma),
+  secret: process.env.SECRET,
 };
 
 export default NextAuth(authOptions);
