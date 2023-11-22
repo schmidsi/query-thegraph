@@ -17,6 +17,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   console.log(data);
 
+  const added = await client.add("test");
+
+  console.log(added);
+
   // const data = client.get("QmcUrvLJ4piwBxhUiQEPsdxAkj124cykQ5ZJeE428XoePt");
 
   // const decoded = await asyncIterableToString(data);
