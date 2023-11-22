@@ -88,7 +88,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log("New Safe deployed:", safeAddress);
   }
 
-  const safe = prisma.safe.findUnique({ where: { address: user.safeAddress! } });
+  const safe = await prisma.safe.findUnique({ where: { address: user.safeAddress! } });
 
   console.log({ safe });
 
