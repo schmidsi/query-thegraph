@@ -13,6 +13,7 @@
     "vercel": "vercel",
     "vercel:yolo": "vercel --build-env NEXT_PUBLIC_IGNORE_BUILD_ERROR=true",
     "prisma": "dotenv -e .env.local -- prisma",
+    "prisma:push": "dotenv -e .env.local -- prisma db push",
     "prisma:push:force": "dotenv -e .env.local -- prisma db push --force-reset",
     "prisma:generate": "dotenv -e .env.local -- prisma generate"
   },
