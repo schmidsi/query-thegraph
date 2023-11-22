@@ -1,6 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "~~/utils/prisma";
 
+const DEFAULT_IPFS_URL = "https://api.thegraph.com/ipfs/api/v0" as const;
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   console.log(req.headers); // Log all request headers
   /* example headers:
@@ -53,7 +55,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     create: { slug: req.body.params.name, user: { connect: { id: user.id } } },
   });
 
-  console.log(subgraph);
+  const existingVersion = await prisma.subgraphVersion.findFirst({
+    where: { subgraphId: subgraph.id, label: req.body.params.version_label },
+  });
+
+  if (existingVersion) {
+    // TODO: Automatically count up
+    console.log("Version already exists");
+    return res.status(400).json({ message: "Version already exists" });
+  }
+
+  const version = await prisma.subgraphVersion.create({
+    data: {
+      subgraph: { connect: { id: subgraph.id } },
+      label: req.body.params.version_label,
+      ipfsHash: req.body.params.ipfs_hash,
+    },
+  });
+
+  console.log({ version, DEFAULT_IPFS_URL });
 
   res.status(200).json({ message: "Request headers logged successfully" });
 }
