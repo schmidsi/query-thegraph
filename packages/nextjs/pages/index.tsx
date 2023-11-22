@@ -9,10 +9,10 @@ import { MetaHeader } from "~~/components/MetaHeader";
 import { Address } from "~~/components/scaffold-eth";
 import prisma from "~~/utils/prisma";
 
-const Home: NextPage<{ posts: any }> = ({ posts }) => {
+const Home: NextPage<{ users: any }> = ({ users }) => {
   const [result, setResult] = useState<ExecutionResult<SubgraphsQuery>>();
 
-  console.log(posts);
+  console.log(users);
 
   useEffect(() => {
     execute(SubgraphsDocument, {}).then(result => {
@@ -92,9 +92,9 @@ const Home: NextPage<{ posts: any }> = ({ posts }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const posts = await prisma.post.findMany();
+  const users = await prisma.user.findMany();
   return {
-    props: { posts },
+    props: { users },
   };
 };
 
