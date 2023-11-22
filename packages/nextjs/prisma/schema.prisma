@@ -49,8 +49,8 @@ model User {
   sessions      Session[]
   apiKey        String     @unique @default(cuid())
   subgraphs     Subgraph[]
-  Safe          Safe?      @relation(fields: [safeId], references: [id])
-  safeId        String?
+  Safe          Safe?      @relation(fields: [safeAddress], references: [address])
+  safeAddress   String?
 }
 
 model VerificationToken {
@@ -88,9 +88,7 @@ model SubgraphVersion {
 }
 
 model Safe {
-  id        String   @id
-  name      String
-  address   String   @unique
+  address   String   @id
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   owners    User[]

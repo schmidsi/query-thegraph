@@ -1,8 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "~~/utils/prisma";
+import deploySafe from "~~/utils/safe/deploySafe";
 
 const DEFAULT_IPFS_URL = "https://api.thegraph.com/ipfs/api/v0" as const;
 
+/* TODOs:
+- [ ] Proper JSON RPC responses: https://en.wikipedia.org/wiki/JSON-RPC
+*/
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   console.log(req.headers); // Log all request headers
   /* example headers:
@@ -74,6 +78,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   });
 
   console.log({ version, DEFAULT_IPFS_URL });
+
+  if (!user.safeAddress) {
+    const { safeAddress } = await deploySafe();
+    await prisma.safe.create({
+      data: { address: safeAddress, owners: { connect: { id: user.id } } },
+    });
+
+    console.log("New Safe deployed:", safeAddress);
+  }
+
+  const safe = prisma.safe.findUnique({ where: { address: user.safeAddress! } });
+
+  console.log({ safe });
 
   res.status(200).json({ message: "Request headers logged successfully" });
 }
