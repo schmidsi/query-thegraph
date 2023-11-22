@@ -40,14 +40,17 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String     @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?    @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
-  apiKey        String    @unique @default(cuid())
+  apiKey        String     @unique @default(cuid())
+  subgraphs     Subgraph[]
+  Safe          Safe?      @relation(fields: [safeId], references: [id])
+  safeId        String?
 }
 
 model VerificationToken {
@@ -57,4 +60,35 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Subgraph {
+  id               String            @id
+  slug             String            @unique
+  name             String
+  description      String?
+  user             User?             @relation(fields: [userId], references: [id])
+  userId           String?           @map("user_id")
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  subgraphVersions SubgraphVersion[]
+}
+
+model SubgraphVersion {
+  id         String   @id
+  subgraph   Subgraph @relation(fields: [subgraphId], references: [id])
+  subgraphId String   @map("subgraph_id")
+  version    String
+  schema     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Safe {
+  id        String   @id
+  name      String
+  address   String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  owners    User[]
 }
