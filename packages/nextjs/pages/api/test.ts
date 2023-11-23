@@ -1,3 +1,4 @@
+import * as yaml from "js-yaml";
 import { create } from "kubo-rpc-client";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -15,6 +16,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const data = await response.text();
 
+  const parsed = yaml.load(data);
+
   console.log(data);
 
   const added = await client.add("test");
@@ -27,5 +30,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   // console.log(data, decoded);
 
-  res.status(200).json({ yaml: data });
+  res.status(200).json({ yaml: parsed });
 }
