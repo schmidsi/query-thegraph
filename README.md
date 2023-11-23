@@ -21,3 +21,26 @@ The Graph Contracts on Arbitrum Sepolia: https://sepolia-explorer.arbitrum.io/ad
 https://sepolia.arbiscan.io/address/0x3133948342F35b8699d8F94aeE064AbB76eDe965#code
 
 Implementation: https://sepolia.arbiscan.io/address/0xb3fc82bcc8c793252460e574a2d604dce0f06d29#code
+
+### Example version file
+
+https://api.thegraph.com/ipfs/api/v0/cat?arg=QmXXMXpN9FLe6ESqXEMhZnAAX1ekUP4Go86iWTc7tW6SyZ
+
+```json
+{ "label": "v0.0.1", "description": null }
+```
+
+### Example Subgraph JSON
+
+```json
+{
+  "description": null,
+  "image": "ipfs://QmX5XLTieWrppz9g85UMKUqvdMsEhMBWjpKD4yfFRWgWPF",
+  "subgraphImage": "https://api.thegraph.com/ipfs/api/v0/cat?arg=QmdSeSQ3APFjLktQY3aNVu3M5QXPfE9ZRK5LqgghRgB7L9",
+  "displayName": "Radiant Arbitrum dLP Price",
+  "name": "Radiant Arbitrum dLP Price Subgraph",
+  "codeRepository": null,
+  "website": null,
+  "categories": null
+}
+```

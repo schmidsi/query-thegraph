@@ -1,5 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import getManifestAsJSON from "~~/utils/ipfs/getManifestAsJSON";
+import uploadObject from "~~/utils/ipfs/uploadObject";
 import prisma from "~~/utils/prisma";
+import createPublishSubgraphTransaction from "~~/utils/safe/createPublishSubgraphTransaction";
 import deploySafe from "~~/utils/safe/deploySafe";
 
 const DEFAULT_IPFS_URL = "https://api.thegraph.com/ipfs/api/v0" as const;
@@ -91,6 +94,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const safe = await prisma.safe.findUnique({ where: { address: user.safeAddress! } });
 
   console.log({ safe });
+
+  const deploymentId = req.body.params.ipfs_hash;
+  const name = req.body.params.name;
+  const mainfestJSON = await getManifestAsJSON(deploymentId);
+  const description = mainfestJSON.description || name;
+
+  const versionMetadata = {
+    label: req.body.params.version_label,
+    description: description,
+  };
+
+  const subgraphMetadata = {
+    description,
+    image: null, // "ipfs://QmX5XLTieWrppz9g85UMKUqvdMsEhMBWjpKD4yfFRWgWPF",
+    subgraphImage: null, // "https://api.thegraph.com/ipfs/api/v0/cat?arg=QmdSeSQ3APFjLktQY3aNVu3M5QXPfE9ZRK5LqgghRgB7L9",
+    displayName: name,
+    name,
+    codeRepository: null,
+    website: null,
+    categories: null,
+  };
+
+  const versionMetadataCID = await uploadObject(versionMetadata);
+  const subgraMetadataCID = await uploadObject(subgraphMetadata);
+
+  await createPublishSubgraphTransaction(safe!.address!, deploymentId, versionMetadataCID, subgraMetadataCID);
 
   res.status(200).json({ message: "Request headers logged successfully" });
 }
