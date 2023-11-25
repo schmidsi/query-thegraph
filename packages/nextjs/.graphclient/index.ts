@@ -11681,8 +11681,7 @@ export type DirectiveResolvers<ContextType = MeshContext> = ResolversObject<{
 export type MeshContext = GraphNetworkMainnetTypes.Context & GraphNetworkArbitrumTypes.Context & BaseMeshContext;
 
 
-import { fileURLToPath } from '@graphql-mesh/utils';
-const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url)), '..');
+const baseDir = pathModule.join(typeof __dirname === 'string' ? __dirname : '/', '..');
 
 const importFn: ImportFn = <T>(moduleId: string) => {
   const relativeModuleId = (pathModule.isAbsolute(moduleId) ? pathModule.relative(baseDir, moduleId) : moduleId).split('\\').join('/').replace(baseDir + '/', '');
@@ -11847,7 +11846,7 @@ export type SubgraphsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type SubgraphsQuery = { crossSubgraphs: Array<(
-    Pick<Subgraph, 'active' | 'codeRepository' | 'createdAt' | 'creatorAddress' | 'currentSignalledTokens' | 'deployedChain' | 'displayName' | 'id' | 'image' | 'migrated' | 'nftImage' | 'oldID' | 'updatedAt' | 'versionCount' | 'website'>
+    Pick<Subgraph, 'active' | 'codeRepository' | 'createdAt' | 'creatorAddress' | 'currentSignalledTokens' | 'deployedChain' | 'displayName' | 'description' | 'id' | 'image' | 'migrated' | 'nftImage' | 'oldID' | 'updatedAt' | 'versionCount' | 'website'>
     & { categories: Array<{ category: Pick<SubgraphCategory, 'id'> }>, currentVersion?: Maybe<(
       Pick<SubgraphVersion, 'createdAt' | 'description' | 'entityVersion' | 'id' | 'label' | 'metadataHash' | 'version'>
       & { subgraphDeployment: Pick<SubgraphDeployment, 'id' | 'originalName' | 'ipfsHash' | 'schemaIpfsHash'> }
@@ -11911,6 +11910,7 @@ export const SubgraphsDocument = gql`
     currentSignalledTokens
     deployedChain
     displayName
+    description
     id
     image
     migrated

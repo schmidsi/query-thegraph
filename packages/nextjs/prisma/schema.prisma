@@ -62,11 +62,37 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+enum DeployableChains {
+  MAINNET
+  ARBITRUM
+  ARBITRUM_SEPOLIA
+}
+
+model Chain {
+  id       Int        @id /// According to https://chainid.network/chains.json
+  name     String     @unique
+  Subgraph Subgraph[]
+}
+
 model Subgraph {
   id               String            @id @default(cuid())
   slug             String            @unique
+  gone             Boolean           @default(false) /// Subgraph is not on the network anymore
+  deployed         Boolean           @default(false) /// Subgraph is deployed to the network
+  managed          Boolean           @default(false) /// Subgraph is managed from this app
+  codeRepository   String?
+  website          String?
+  creatorAddress   String?
+  signalledTokens  String?
+  deployedChain    DeployableChains?
+  indexedChain     Chain?            @relation(fields: [chainId], references: [id])
+  chainId          Int?
+  categories       String[]
+  networkId        String?           @unique /// Subgraph id on The Graph Network
   name             String? // TODO: Download info from IPFS and make required
+  displayName      String?
   description      String?
+  imageURI         String?
   user             User?             @relation(fields: [userId], references: [id])
   userId           String?           @map("user_id")
   createdAt        DateTime          @default(now())
@@ -76,6 +102,8 @@ model Subgraph {
 
 model SubgraphVersion {
   id         String   @id @default(cuid())
+  networkId  String? /// Version id on The Graph Network
+  // TODO: Rename to deploymentId
   ipfsHash   String // not unique since there might be multiple subgraphs with the same deployment?
   subgraph   Subgraph @relation(fields: [subgraphId], references: [id])
   subgraphId String   @map("subgraph_id")
